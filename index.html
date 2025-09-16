@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Oddiy fon misollari — HTML/CSS</title>
+<style>
+  :root{
+    --ui-bg: rgba(255,255,255,0.85);
+    --ui-radius: 12px;
+    --ui-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    --accent: #3466ff;
+  }
+
+  /* Basic layout */
+  html,body{height:100%; margin:0; font-family: Inter, system-ui, Arial; background:#f3f4f6;}
+  body{display:flex; align-items:center; justify-content:center; padding:32px; transition:background 400ms ease;}
+  .card{
+    width:920px; max-width:100%;
+    background:var(--ui-bg); border-radius:var(--ui-radius); box-shadow:var(--ui-shadow);
+    padding:20px; display:grid; gap:16px;
+  }
+  h1{margin:0; font-size:18px;}
+  p{margin:0; color:#333; font-size:14px;}
+
+  /* Preview area */
+  .preview{
+    height:360px; border-radius:10px; overflow:hidden; position:relative; border:1px solid rgba(0,0,0,0.06);
+    display:flex; align-items:center; justify-content:center; color:white; font-weight:600;
+  }
+
+  /* 1) Solid color */
+  .bg-solid{
+    background: linear-gradient(180deg,#2b6cb0,#244b9b); /* a little depth */
+  }
+
+  /* 2) Smooth gradient */
+  .bg-gradient{
+    background: linear-gradient(135deg, #ff7a7a 0%, #ffb86b 35%, #ffd569 100%);
+  }
+
+  /* 3) Subtle pattern using multiple radial-gradients */
+  .bg-pattern{
+    /* base gradient + dotted-ish pattern */
+    background:
+      radial-gradient(circle at 10% 10%, rgba(255,255,255,0.08) 0 2px, transparent 3px),
+      radial-gradient(circle at 30% 70%, rgba(255,255,255,0.06) 0 2px, transparent 3px),
+      linear-gradient(180deg, #0f172a 0%, #0b1220 100%);
+    background-size: 40px 40px, 60px 60px, cover;
+  }
+
+  /* 4) Gentle animated gradient */
+  .bg-animated{
+    background: linear-gradient(270deg, #7b61ff, #46a0ff, #7beab2);
+    background-size: 600% 600%;
+    animation: gradientShift 12s ease infinite;
+  }
+
+  @keyframes gradientShift{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+
+  /* Controls */
+  .controls{display:flex; gap:8px; flex-wrap:wrap;}
+  .btn{
+    background:white; border:1px solid rgba(0,0,0,0.08); padding:8px 12px; border-radius:8px; cursor:pointer;
+    font-size:13px;
+  }
+  .btn.active{
+    border-color:var(--accent); box-shadow:0 4px 14px rgba(52,102,255,0.12);
+  }
+
+  /* small helper text shown inside preview so contrast remains OK */
+  .preview .label{
+    position:absolute; left:12px; top:12px; font-size:12px; opacity:0.9;
+    background:rgba(0,0,0,0.18); padding:6px 8px; border-radius:8px;
+  }
+
+  /* accessibility: respect reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .bg-animated { animation: none; background-size: cover; }
+  }
+</style>
+</head>
+<body class="bg-gradient">
+  <div class="card" role="main">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h1>Oddiy fon misollari (HTML + CSS)</h1>
+        <p>Quyidagi tugmalar bilan fon turini almashtirib koʻr. Bu faylni nusxa qilib `.html` ga saqlang.</p>
+      </div>
+      <div style="font-size:12px; color:#666;">No external images — faqat CSS</div>
+    </div>
+
+    <div class="preview" id="preview">
+      <div class="label" id="label">Gradient (default)</div>
+      <div style="text-align:center; pointer-events:none;">
+        <div style="font-size:28px; text-shadow:0 4px 18px rgba(0,0,0,0.35);">Sizning foniz</div>
+        <div style="font-size:13px; opacity:0.9; margin-top:6px;">HTML &amp; CSS bilan sodda fon</div>
+      </div>
+    </div>
+
+    <div class="controls" aria-label="Fon variantlari">
+      <button class="btn" data-class="bg-solid">Solid rang</button>
+      <button class="btn active" data-class="bg-gradient">Gradient</button>
+      <button class="btn" data-class="bg-pattern">Naqsh (pattern)</button>
+      <button class="btn" data-class="bg-animated">Animatsiyalangan</button>
+    </div>
+  </div>
+
+<script>
+  // Minimal JS: tugma bosilganda body klassini almashtiradi va labelni yangilaydi
+  const buttons = document.querySelectorAll('.btn');
+  const body = document.body;
+  const preview = document.getElementById('preview');
+  const label = document.getElementById('label');
+
+  function setActive(btn){
+    buttons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const cls = btn.getAttribute('data-class');
+    body.className = cls; // faqat bitta klass bo'ladi
+    preview.className = 'preview ' + cls;
+    label.textContent = btn.textContent;
+  }
+
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=> setActive(btn));
+  });
+
+  // Boshlang'ich holat uchun — topilgan .btn.active bo'yicha sozla
+  const init = document.querySelector('.btn.active');
+  if(init) setActive(init);
+</script>
+</body>
+</html>
